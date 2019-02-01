@@ -2,8 +2,8 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-public class PlayerScript : MonoBehaviour {
-
+public class PlayerScript : MonoBehaviour
+{
     [Header("Movement")]
     public bool touching;
     public float MovementSpeed;
@@ -20,7 +20,6 @@ public class PlayerScript : MonoBehaviour {
     public float atk1Range;
     public float atk1hitForce;
     public float atk1Damage;
-    public float atk1Cool;
     [Space(10)]
     [Header("Sprites")]
     private SpriteRenderer mR;
@@ -38,12 +37,13 @@ public class PlayerScript : MonoBehaviour {
     void Update()
     {
         bool oldDirection = direction;
-
+        
         print(touching);
-
         //Attack 1
-        atk1Cool += Time.deltaTime;
-        if ((atk1Cool >= 1) &&Input.GetKey(KeyCode.C))
+        if(atk1HoldDown && Input.GetKey(KeyCode.Q))
+        {
+            Attack1();
+        } else if (!atk1HoldDown && Input.GetKeyDown(KeyCode.Q))
         {
             Attack1();
         }
@@ -51,14 +51,14 @@ public class PlayerScript : MonoBehaviour {
 
         //Gravity and Movement
         Vector2 MovementVector = new Vector2(0, 0);
-
+        
         if (!(Input.GetKey(KeyCode.A) && Input.GetKey(KeyCode.D)))
         {
             if (Input.GetKey(KeyCode.A))
             {
                 direction = false;
                 MovementVector.x = -1 * MovementSpeed;
-
+                
             }
             if (Input.GetKey(KeyCode.D))
             {
@@ -102,7 +102,7 @@ public class PlayerScript : MonoBehaviour {
 
         if (oldDirection != direction)
         {
-            if (mR.flipX)
+            if(mR.flipX)
             {
                 mR.flipX = false;
             }
@@ -110,7 +110,7 @@ public class PlayerScript : MonoBehaviour {
             {
                 mR.flipX = true;
             }
-
+            
         }
     }
 
@@ -119,28 +119,25 @@ public class PlayerScript : MonoBehaviour {
     void Attack1()
     {
         Vector2 d;
-        if (direction)
+        if(direction)
         {
             d = Vector2.right;
-        }
-        else
+        } else
         {
             d = Vector2.left;
         }
-        if (atk1isMelee)
+        if(atk1isMelee)
         {
             RaycastHit2D hit = Physics2D.Raycast(transform.position, d, atk1Range);
             Health hp = hit.collider.gameObject.GetComponent<Health>();
-            if (hp != null)
-            {
+            if (hp != null) {
                 hp.TakeDamage(atk1Damage);
             }
-        }
-        else
+        } else
         {
             Debug.LogError("I haven't programmed that path yet, damage type not melee");
         }
-
+        
     }
 
     public void ChangeCharacter()
