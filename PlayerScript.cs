@@ -138,6 +138,49 @@ public class PlayerScript : MonoBehaviour {
 
     }
 
+    void AttackGiacmo()
+    {
+        Vector2 d;
+        if (direction)
+        {
+            d = Vector2.right;
+        }
+        else
+        {
+            d = Vector2.left;
+        }
+            RaycastHit2D hit = Physics2D.Raycast(transform.position, d, atk1Range * 2);
+            Health hp = hit.collider.gameObject.GetComponent<Health>();
+        if (hp != null)
+        {
+            hp.TakeDamage(13);
+            int directionValue = 0;
+            if (direction)
+            {
+                directionValue = 1;
+            }
+            else
+            {
+                directionValue = -1;
+            }
+            hit.collider.gameObject.GetComponent<Rigidbody2D>().AddForce(new Vector2(directionValue, 0), ForceMode2D.Impulse);
+        }
+    }
+
+    void AttackRobot () {
+        foreach (Collider2D c in Physics2D.OverlapBoxAll(transform.position, new Vector2 (atk1Range * 1.5f, 16), 0)) {
+            if (c.gameObject.tag == "Player")
+            {
+                Health hp = c.gameObject.GetComponent<Health>();
+                hp.TakeDamage(8);
+            }
+        }
+    }
+
+    public void Knockback (float x, float y, float power) {
+        GetComponent<Rigidbody2D>().AddForce(new Vector2(x * power, y * power));
+    }
+
     public void ChangeCharacter()
     {
 
