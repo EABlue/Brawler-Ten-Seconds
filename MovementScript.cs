@@ -8,6 +8,7 @@ public class MovementScript : MonoBehaviour {
     public float MovementSpeed;
     float gravity;
     public float gravityMultiplier;
+    public float JumpMultiplier;
 
 	// Use this for initialization
 	void Start () {
@@ -29,7 +30,15 @@ public class MovementScript : MonoBehaviour {
         }
 
         if (touching) {
-            MovementVector.y = 0;
+            if (Input.GetKeyDown(KeyCode.W))
+            {
+                gravity = -1;
+                MovementVector.y = gravity * JumpMultiplier;
+            }
+            else
+            {
+                MovementVector.y = 0;
+            }
         } else {
             if (!(gravity >= 1)) {
                 gravity += Time.deltaTime;
