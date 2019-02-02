@@ -22,6 +22,7 @@ public class PlayerScript : MonoBehaviour {
     public float atk1hitForce;
     public float atk1Damage;
     public float atk1Cool;
+    float specialCool = 0f;
     [Space(10)]
     [Header("Sprites")]
     private SpriteRenderer mR;
@@ -49,6 +50,21 @@ public class PlayerScript : MonoBehaviour {
             Attack1();
         }
 
+        //Special
+        specialCool += Time.deltaTime;
+        if (specialCool >= 4f) {
+            if (CharacterName = "Doc Blo") {
+                AttackBlo();
+            }
+            if (CharacterName = "Giacmo")
+            {
+                AttackGiacmo();
+            }
+            if (CharacterName = "Frog")
+            {
+                AttackFrog();
+            }
+        }
 
         //Gravity and Movement
         Vector2 MovementVector = new Vector2(0, 0);
@@ -138,8 +154,23 @@ public class PlayerScript : MonoBehaviour {
 
     }
 
+    void AttackBlo () {
+        if (touching) {
+            foreach (Collider2D c in Physics2D.OverlapCircleAll(transform.position, atk1Range * 2.5f, 0))
+            {
+                if (c.gameObject.tag == "Player")
+                {
+                    Health hp = c.gameObject.GetComponent<Health>();
+                    hp.TakeDamage(18);
+                    hp.gameObject.GetComponent<PlayerScript>().Knockback(Mathf.Abs(3 - (Mathf.Abs(transform.position.x - hp.transform.position.x))), Mathf.Abs(3 - (Mathf.Abs(transform.position.y - hp.transform.position.y))), 20);
+                }
+            }
+        }
+    }
+
     void AttackGiacmo()
     {
+
         Vector2 d;
         if (direction)
         {
@@ -153,7 +184,7 @@ public class PlayerScript : MonoBehaviour {
             Health hp = hit.collider.gameObject.GetComponent<Health>();
         if (hp != null)
         {
-            hp.TakeDamage(13);
+            hp.TakeDamage(15);
             int directionValue = 0;
             if (direction)
             {
@@ -167,13 +198,32 @@ public class PlayerScript : MonoBehaviour {
         }
     }
 
-    void AttackRobot () {
-        foreach (Collider2D c in Physics2D.OverlapBoxAll(transform.position, new Vector2 (atk1Range * 1.5f, 16), 0)) {
-            if (c.gameObject.tag == "Player")
+    void AttackFrog () {
+        Vector2 d;
+        if (direction)
+        {
+            d = Vector2.right;
+        }
+        else
+        {
+            d = Vector2.left;
+        }
+        RaycastHit2D hit = Physics2D.Raycast(transform.position, d, atk1Range * 3);
+        Health hp = hit.collider.gameObject.GetComponent<Health>();
+        if (hp != null)
+        {
+            hp.TakeDamage(10);
+            int directionValue = 0;
+            if (direction)
             {
-                Health hp = c.gameObject.GetComponent<Health>();
-                hp.TakeDamage(8);
+                directionValue = 1;
             }
+            else
+            {
+                directionValue = -1;
+            }
+            Vector3 posn = hit.collider.gameObject.transform.position;
+            hit.collider.gameObject.transform.position = new Vector2 ((posn.x + transform.position.x) / 2, posn.y);
         }
     }
 
